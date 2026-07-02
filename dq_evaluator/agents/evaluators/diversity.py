@@ -9,12 +9,13 @@ from dq_evaluator.models.iso5259 import (
 )
 
 SYSTEM_PROMPT = """You are a data quality evaluator specializing in the Diversity characteristic of ISO/IEC 5259.
-Evaluate the three diversity dimensions. Respond with JSON only."""
+Evaluate the four diversity dimensions. Respond with JSON only."""
 
 DIMENSIONS = [
     "label_richness",
     "relative_label_abundance",
     "category_size_diversity",
+    "component_richness",
 ]
 
 
@@ -57,6 +58,37 @@ def _compute_diversity_stats(df: pd.DataFrame, profile: dict) -> dict:
             }
         stats["feature_diversity"] = diversity_info
 
+    # Component richness: detect time-series structure (ISO/IEC 5259-2)
+    # Score = count of detectable components (trend, seasonal, cyclical, irregular) / 4
+    numeric_cols = df.select_dtypes(include="number").columns.tolist()
+    datetime_cols = [c for c in df.columns if "date" in c.lower() or "time" in c.lower() or "timestamp" in c.lower()]
+    stats["time_series_indicators"] = {
+        "datetime_columns": datetime_cols,
+        "numeric_columns_count": len(numeric_cols),
+        "row_count": len(df),
+    }
+    # Heuristic component detection on longest numeric column
+    components_detected = []
+    if numeric_cols and len(df) >= 10:
+        col = numeric_cols[0]
+        series = df[col].dropna()
+        if len(series) >= 10:
+            import numpy as np
+            mean_val = float(series.mean())
+            std_val = float(series.std())
+            # Trend: check if first-half mean differs from second-half mean by >0.5 std
+            mid = len(series) // 2
+            if std_val > 0 and abs(series.iloc[:mid].mean() - series.iloc[mid:].mean()) > 0.5 * std_val:
+                components_detected.append("trend")
+            # Irregular: always present if std > 0
+            if std_val > 0:
+                components_detected.append("irregular")
+            # Seasonal/cyclical: present if datetime column exists (proxy — LLM will refine)
+            if datetime_cols:
+                components_detected.append("seasonal")
+    stats["time_series_components_detected"] = components_detected
+    stats["component_richness_score"] = round(len(components_detected) / 4 * 100, 1)
+
     return stats
 
 
@@ -77,18 +109,22 @@ def evaluate_diversity(
 Computed diversity statistics:
 {json.dumps(stats, indent=2)}
 
-Evaluate the three ISO/IEC 5259 diversity dimensions:
+Evaluate the four ISO/IEC 5259 diversity dimensions:
 - label_richness: number of distinct classes/labels and whether they sufficiently cover the domain scenarios
 - relative_label_abundance: distribution of labels — is any class over- or under-represented?
 - category_size_diversity: are category sizes balanced? (% of categories below 50% threshold)
+- component_richness: presence of time-series structure components (Trend, Seasonal, Cyclical, Irregular variations).
+  Score = detected components / 4 * 100. Use the heuristic score as a baseline and refine based on domain context.
+  If the dataset is not time-series in nature, score this as N/A with passed=null.
 
 Consider domain context: for ML/anomaly detection, class imbalance is common but must be flagged.
 
 Respond with JSON:
 {{
-  "label_richness": {{"score": <0-100 or null>, "passed": <bool>, "explanation": "..."}},
-  "relative_label_abundance": {{"score": <0-100 or null>, "passed": <bool>, "explanation": "..."}},
-  "category_size_diversity": {{"score": <0-100 or null>, "passed": <bool>, "explanation": "..."}}
+  "label_richness": {{"score": <0-100 or null>, "passed": <bool or null>, "explanation": "..."}},
+  "relative_label_abundance": {{"score": <0-100 or null>, "passed": <bool or null>, "explanation": "..."}},
+  "category_size_diversity": {{"score": <0-100 or null>, "passed": <bool or null>, "explanation": "..."}},
+  "component_richness": {{"score": <0-100 or null>, "passed": <bool or null>, "explanation": "..."}}
 }}"""
 
     response = client.chat.complete(

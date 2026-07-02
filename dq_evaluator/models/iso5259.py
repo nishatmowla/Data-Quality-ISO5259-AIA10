@@ -30,6 +30,7 @@ CHARACTERISTIC_DIMENSIONS: dict[QualityCharacteristic, list[str]] = {
         "data_accuracy_assurance",
         "risk_of_inaccuracy",
         "data_accuracy_range",
+        "data_model_accuracy",
     ],
     QualityCharacteristic.COMPLETENESS: [
         "value_completeness",
@@ -48,10 +49,13 @@ CHARACTERISTIC_DIMENSIONS: dict[QualityCharacteristic, list[str]] = {
         "label_richness",
         "relative_label_abundance",
         "category_size_diversity",
+        "component_richness",
     ],
     QualityCharacteristic.CREDIBILITY: [
         "value_credibility",
         "source_credibility",
+        "data_dictionary_credibility",
+        "data_model_credibility",
     ],
     QualityCharacteristic.CURRENTNESS: [
         "feature_currentness",

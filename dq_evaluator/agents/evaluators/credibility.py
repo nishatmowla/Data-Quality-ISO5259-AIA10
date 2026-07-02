@@ -10,9 +10,9 @@ from dq_evaluator.models.iso5259 import (
 
 SYSTEM_PROMPT = """You are a data quality evaluator specializing in the Credibility characteristic of ISO/IEC 5259.
 Credibility is the extent to which data is considered believable and reliable within its usage context.
-Evaluate value credibility and source credibility. Respond with JSON only."""
+Evaluate all four credibility dimensions. Respond with JSON only."""
 
-DIMENSIONS = ["value_credibility", "source_credibility"]
+DIMENSIONS = ["value_credibility", "source_credibility", "data_dictionary_credibility", "data_model_credibility"]
 
 
 def evaluate_credibility(
@@ -42,7 +42,7 @@ Dataset profile:
 Dataset metadata provided:
 {json.dumps(dataset_metadata, indent=2)}
 
-Evaluate the two ISO/IEC 5259 credibility dimensions:
+Evaluate the four ISO/IEC 5259 credibility dimensions:
 
 - value_credibility: Do data values follow expected behavioral patterns for this domain?
   Consider: do numeric ranges, distributions, and value types match what domain knowledge would predict?
@@ -52,10 +52,20 @@ Evaluate the two ISO/IEC 5259 credibility dimensions:
   Consider: is the source named and known? Is there documentation? Is collection methodology described?
   Does it adhere to relevant standards? Is it peer-reviewed or institutionally backed?
 
+- data_dictionary_credibility: Does the dataset have a data dictionary or schema documentation that is validated
+  or certified? Consider: are column names and types clearly defined? Are there descriptions/units for each field?
+  Is the schema versioned or formally reviewed? Score based on available metadata and column naming conventions.
+
+- data_model_credibility: Does the data model (schema structure, relationships, constraints) provide credible
+  and accurate information about the domain? Consider: are data types appropriate? Are relationships between
+  fields logically coherent? Is the schema consistent with domain standards for this type of data?
+
 Respond with JSON:
 {{
   "value_credibility": {{"score": <0-100>, "passed": <bool>, "explanation": "..."}},
-  "source_credibility": {{"score": <0-100>, "passed": <bool>, "explanation": "..."}}
+  "source_credibility": {{"score": <0-100>, "passed": <bool>, "explanation": "..."}},
+  "data_dictionary_credibility": {{"score": <0-100>, "passed": <bool>, "explanation": "..."}},
+  "data_model_credibility": {{"score": <0-100>, "passed": <bool>, "explanation": "..."}}
 }}"""
 
     response = client.chat.complete(

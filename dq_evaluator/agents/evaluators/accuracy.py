@@ -10,7 +10,7 @@ from dq_evaluator.tools.rule_checker import check_syntactic_rules, check_semanti
 import pandas as pd
 
 SYSTEM_PROMPT = """You are a data quality evaluator specializing in the Accuracy characteristic of ISO/IEC 5259.
-Evaluate the following five accuracy dimensions based on the rule check results and dataset profile.
+Evaluate the following six accuracy dimensions based on the rule check results and dataset profile.
 Respond with a JSON object only."""
 
 DIMENSIONS = [
@@ -19,6 +19,7 @@ DIMENSIONS = [
     "data_accuracy_assurance",
     "risk_of_inaccuracy",
     "data_accuracy_range",
+    "data_model_accuracy",
 ]
 
 RESULT_SCHEMA = {
@@ -64,15 +65,17 @@ Syntactic rule check results:
 Semantic rule field statistics (for LLM-based assessment):
 {json.dumps(semantic_stubs, indent=2)}
 
-Evaluate all five accuracy dimensions for this dataset. For each dimension:
+Evaluate all six accuracy dimensions for this dataset. For each dimension:
 - syntactic_accuracy: based on syntactic rule pass rates
 - semantic_accuracy: based on semantic rule field stats and domain logic
 - data_accuracy_assurance: what % of data items were measurable/checkable for accuracy
 - risk_of_inaccuracy: presence of outliers or anomalous values (0% risk = good, 100% = bad; invert for score)
 - data_accuracy_range: are numeric fields within expected domain ranges
+- data_model_accuracy: does the data model (schema, column types, structure) accurately describe the system?
+  Consider: are data types appropriate for each field? Does the schema match domain conventions?
+  Are there mismatched types, poorly named columns, or structural issues that reduce model accuracy?
 
-Respond with JSON matching:
-{json.dumps(RESULT_SCHEMA, indent=2)}"""
+Respond with JSON where each key is a dimension name with fields: score (0-100 or null), passed (bool), explanation (string)."""
 
     response = client.chat.complete(
         model=model,

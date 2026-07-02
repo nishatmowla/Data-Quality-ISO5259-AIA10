@@ -42,12 +42,12 @@ Dataset + Domain Description
 
 | Characteristic | Sub-dimensions |
 |---|---|
-| **Accuracy** | Syntactic accuracy · Semantic accuracy · Data accuracy assurance · Risk of inaccuracy · Data accuracy range |
+| **Accuracy** | Syntactic accuracy · Semantic accuracy · Data accuracy assurance · Risk of inaccuracy · Data accuracy range · Data model accuracy |
 | **Completeness** | Value completeness · Value occurrence completeness · Feature completeness · Record completeness · Label completeness |
 | **Consistency** | Data record consistency · Distribution of data values · Data format consistency · Semantic consistency |
-| **Diversity** | Label richness · Relative label abundance · Category size diversity |
-| **Credibility** | Value credibility · Source credibility |
-| **Currentness** | Feature currentness · Record currentness |
+| **Diversity** | Label richness · Relative label abundance · Category size diversity · Component richness |
+| **Credibility** | Value credibility · Source credibility · Data dictionary credibility · Data model credibility |
+| **Currentness** | Feature currentness · Record currentness (composite: age since creation, last-updated, collection time span) |
 
 Each characteristic has a configurable **priority (1–3)**, allowing domain experts to weight evaluation focus (e.g. accuracy and completeness are typically highest priority for ML training data).
 
