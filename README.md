@@ -239,7 +239,7 @@ Any tabular dataset with a domain description works.
 
 ## License
 
-This project is licensed under the **CC BY 4.0** License — see [LICENSE](LICENSE) for details.
+This project is licensed under the **MIT License** — see [LICENSE](LICENSE) for details.
 
 ---
 
