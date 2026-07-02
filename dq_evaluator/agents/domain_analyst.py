@@ -86,6 +86,7 @@ Respond with a JSON object matching this schema:
 {json.dumps(ANALYSIS_SCHEMA, indent=2)}"""
 
     response = client.chat.complete(
+        timeout_ms=120000,
         model=model,
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},

@@ -91,6 +91,7 @@ Respond with JSON:
 }}"""
 
     response = client.chat.complete(
+        timeout_ms=120000,
         model=model,
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},

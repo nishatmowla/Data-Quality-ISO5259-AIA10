@@ -78,6 +78,7 @@ Evaluate all six accuracy dimensions for this dataset. For each dimension:
 Respond with JSON where each key is a dimension name with fields: score (0-100 or null), passed (bool), explanation (string)."""
 
     response = client.chat.complete(
+        timeout_ms=120000,
         model=model,
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
