@@ -8,7 +8,7 @@ Given a domain description and dataset profile, this agent:
 """
 
 import json
-from mistralai.client import Mistral
+from mistralai import Mistral
 
 from dq_evaluator.models.iso5259 import DataUsageContext, DataQualitySubject, QualityCharacteristic
 

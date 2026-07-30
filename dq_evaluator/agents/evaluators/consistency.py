@@ -2,7 +2,7 @@
 
 import json
 import pandas as pd
-from mistralai.client import Mistral
+from mistralai import Mistral
 
 from dq_evaluator.models.iso5259 import (
     CharacteristicResult, DimensionResult, QualityCharacteristic, SemanticRule

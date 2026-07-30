@@ -9,7 +9,7 @@ Rules are grounded in domain standards and the specific dataset columns.
 """
 
 import json
-from mistralai.client import Mistral
+from mistralai import Mistral
 
 from dq_evaluator.models.iso5259 import (
     DataUsageContext, SemanticRule, SyntacticRule

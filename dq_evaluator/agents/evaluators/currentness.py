@@ -2,7 +2,7 @@
 
 import json
 from datetime import datetime
-from mistralai.client import Mistral
+from mistralai import Mistral
 
 from dq_evaluator.models.iso5259 import (
     CharacteristicResult, DimensionResult, QualityCharacteristic

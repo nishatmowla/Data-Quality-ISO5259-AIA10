@@ -20,7 +20,7 @@ import os
 import sys
 from pathlib import Path
 
-from mistralai.client import Mistral
+from mistralai import Mistral
 
 from dq_evaluator.tools.data_profiler import load_dataset, profile_dataset, profile_to_text
 from dq_evaluator.agents.domain_analyst import analyze_domain

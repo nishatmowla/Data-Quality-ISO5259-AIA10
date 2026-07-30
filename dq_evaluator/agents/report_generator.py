@@ -9,7 +9,7 @@ Synthesizes all evaluation results into a structured final report with:
 """
 
 import json
-from mistralai.client import Mistral
+from mistralai import Mistral
 
 from dq_evaluator.models.iso5259 import (
     DataQualityReport, DataUsageContext, DataQualitySubject, CharacteristicResult, QualityCharacteristic

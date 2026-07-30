@@ -22,7 +22,7 @@ import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from mistralai.client import Mistral
+from mistralai import Mistral
 from dq_evaluator.tools.data_profiler import profile_dataset, profile_to_text
 from dq_evaluator.tools.rule_checker import check_syntactic_rules
 from dq_evaluator.agents.domain_analyst import analyze_domain
