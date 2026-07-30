@@ -15,7 +15,7 @@ from dq_evaluator.models.iso5259 import (
     DataQualityReport, DataUsageContext, DataQualitySubject, CharacteristicResult, QualityCharacteristic
 )
 
-SYSTEM_PROMPT = """You are a data quality reporting expert aligned with ISO/IEC 5259 and EU AI Act Article 10.
+SYSTEM_PROMPT = """You are a data quality reporting expert aligned with ISO/IEC 5259, EU AI Act Article 10, and GDPR Article 5.
 Synthesize evaluation results into a concise, actionable report.
 Respond with JSON only."""
 
@@ -59,7 +59,8 @@ Generate a final data quality report. Respond with JSON:
 {{
   "overall_assessment": "<2-3 sentence summary of overall data quality, weighted by priorities>",
   "recommendations": ["<actionable recommendation 1>", "<recommendation 2>", ...],
-  "ai_act_compliance_notes": "<Assessment against EU AI Act Article 10 requirements: free of errors, complete, relevant, sufficiently representative. Note gaps.>"
+  "ai_act_compliance_notes": "<Assessment against EU AI Act Article 10 requirements: free of errors, complete, relevant, sufficiently representative. Note gaps.>",
+  "gdpr_compliance_notes": "<Assessment against GDPR Article 5 data quality principles: (a) accuracy — Art.5(1)(d): are values accurate and kept up to date?; (b) data minimisation — Art.5(1)(c): is only necessary data collected?; (c) storage limitation — Art.5(1)(e): is data current and not retained beyond its useful life?; (d) integrity and confidentiality — Art.5(1)(f): is data protected against inaccuracy and unauthorised alteration?; (e) right to rectification — Art.16: can inaccurate records be identified and corrected?; (f) right to erasure — Art.17: can outdated records be identified and removed?. Flag any gaps and their associated GDPR risk.>"
 }}"""
 
     response = client.chat.complete(
@@ -93,6 +94,7 @@ Generate a final data quality report. Respond with JSON:
         overall_assessment=str(result.get("overall_assessment", "")),
         recommendations=recommendations,
         ai_act_compliance_notes=str(result.get("ai_act_compliance_notes", "")),
+        gdpr_compliance_notes=str(result.get("gdpr_compliance_notes", "")),
     )
 
 
@@ -146,6 +148,15 @@ def format_report_text(report: DataQualityReport) -> str:
         f"",
         f"## EU AI Act Article 10 Compliance Notes",
         compliance or "",
+    ]
+
+    gdpr = report.gdpr_compliance_notes
+    if isinstance(gdpr, dict):
+        gdpr = str(gdpr)
+    lines += [
+        f"",
+        f"## GDPR Article 5 Compliance Notes",
+        gdpr or "",
     ]
 
     return "\n".join(str(l) for l in lines)

@@ -135,3 +135,4 @@ class DataQualityReport:
     overall_assessment: str
     recommendations: list[str]
     ai_act_compliance_notes: str = ""
+    gdpr_compliance_notes: str = ""

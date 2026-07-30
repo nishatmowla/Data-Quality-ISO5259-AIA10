@@ -205,6 +205,7 @@ The generated Markdown report includes:
 - **Per-characteristic results**: score (0–100%) and pass/fail for every sub-dimension with explanation
 - **Recommendations**: actionable improvement suggestions
 - **EU AI Act Article 10 compliance notes**: gaps in completeness, representativeness, accuracy, and error-freedom
+- **GDPR Article 5 compliance notes**: assessment against accuracy (Art.5(1)(d)), data minimisation (Art.5(1)(c)), storage limitation (Art.5(1)(e)), integrity (Art.5(1)(f)), and rights to rectification (Art.16) and erasure (Art.17)
 
 ---
 
